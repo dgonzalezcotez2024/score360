@@ -1,11 +1,15 @@
 
+import { useObligations } from "@/hooks/useObligations";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, FileText } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Obligaciones = () => {
+  const { data: obligations, isLoading } = useObligations();
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -31,7 +35,6 @@ const Obligaciones = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Número</TableHead>
-                <TableHead>Deudor</TableHead>
                 <TableHead>Tipo</TableHead>
                 <TableHead>Monto</TableHead>
                 <TableHead>Fecha Vencimiento</TableHead>
@@ -40,24 +43,47 @@ const Obligaciones = () => {
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>OBL-001</TableCell>
-                <TableCell>Juan Pérez</TableCell>
-                <TableCell>Cuota Administración</TableCell>
-                <TableCell>$500,000</TableCell>
-                <TableCell>2025-05-15</TableCell>
-                <TableCell>
-                  <span className="bg-red-100 text-red-800 px-2 py-1 rounded-full text-xs">
-                    Vencida
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm">
-                    <FileText className="h-4 w-4 mr-2" />
-                    Ver
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : obligations?.map((obligation) => (
+                <TableRow key={obligation.id}>
+                  <TableCell>{obligation.number}</TableCell>
+                  <TableCell>
+                    {obligation.type === 'admin_fee' && 'Cuota Administración'}
+                    {obligation.type === 'invoice' && 'Factura'}
+                    {obligation.type === 'promissory_note' && 'Pagaré'}
+                  </TableCell>
+                  <TableCell>${obligation.amount.toLocaleString()}</TableCell>
+                  <TableCell>{new Date(obligation.due_date).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      obligation.status === 'paid' 
+                        ? 'bg-green-100 text-green-800'
+                        : obligation.status === 'overdue'
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-yellow-100 text-yellow-800'
+                    }`}>
+                      {obligation.status === 'paid' && 'Pagada'}
+                      {obligation.status === 'overdue' && 'Vencida'}
+                      {obligation.status === 'pending' && 'Pendiente'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm">
+                      <FileText className="h-4 w-4 mr-2" />
+                      Ver
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </CardContent>

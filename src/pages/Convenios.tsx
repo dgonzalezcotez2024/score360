@@ -1,11 +1,15 @@
 
+import { usePaymentAgreements } from "@/hooks/usePaymentAgreements";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { Plus, Search, CalendarCheck } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const Convenios = () => {
+  const { data: agreements, isLoading } = usePaymentAgreements();
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -31,33 +35,51 @@ const Convenios = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Número</TableHead>
-                <TableHead>Deudor</TableHead>
                 <TableHead>Monto Total</TableHead>
                 <TableHead>Cuotas</TableHead>
-                <TableHead>Próximo Pago</TableHead>
+                <TableHead>Fecha Inicio</TableHead>
                 <TableHead>Estado</TableHead>
                 <TableHead>Acciones</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
-              <TableRow>
-                <TableCell>CONV-001</TableCell>
-                <TableCell>Juan Pérez</TableCell>
-                <TableCell>$2,500,000</TableCell>
-                <TableCell>12</TableCell>
-                <TableCell>2025-05-01</TableCell>
-                <TableCell>
-                  <span className="bg-green-100 text-green-800 px-2 py-1 rounded-full text-xs">
-                    Al día
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <Button variant="ghost" size="sm">
-                    <CalendarCheck className="h-4 w-4 mr-2" />
-                    Ver pagos
-                  </Button>
-                </TableCell>
-              </TableRow>
+              {isLoading ? (
+                <TableRow>
+                  <TableCell colSpan={6}>
+                    <div className="space-y-2">
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                      <Skeleton className="h-4 w-full" />
+                    </div>
+                  </TableCell>
+                </TableRow>
+              ) : agreements?.map((agreement) => (
+                <TableRow key={agreement.id}>
+                  <TableCell>{agreement.id}</TableCell>
+                  <TableCell>${agreement.total_amount.toLocaleString()}</TableCell>
+                  <TableCell>{agreement.installments}</TableCell>
+                  <TableCell>{new Date(agreement.start_date).toLocaleDateString()}</TableCell>
+                  <TableCell>
+                    <span className={`px-2 py-1 rounded-full text-xs ${
+                      agreement.status === 'completed'
+                        ? 'bg-green-100 text-green-800'
+                        : agreement.status === 'defaulted'
+                        ? 'bg-red-100 text-red-800'
+                        : 'bg-blue-100 text-blue-800'
+                    }`}>
+                      {agreement.status === 'completed' && 'Completado'}
+                      {agreement.status === 'defaulted' && 'Incumplido'}
+                      {agreement.status === 'active' && 'Activo'}
+                    </span>
+                  </TableCell>
+                  <TableCell>
+                    <Button variant="ghost" size="sm">
+                      <CalendarCheck className="h-4 w-4 mr-2" />
+                      Ver pagos
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))}
             </TableBody>
           </Table>
         </CardContent>
