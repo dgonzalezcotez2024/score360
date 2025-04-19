@@ -35,6 +35,7 @@ const Convenios = () => {
             <TableHeader>
               <TableRow>
                 <TableHead>Número</TableHead>
+                <TableHead>Deudor</TableHead>
                 <TableHead>Monto Total</TableHead>
                 <TableHead>Cuotas</TableHead>
                 <TableHead>Fecha Inicio</TableHead>
@@ -45,7 +46,7 @@ const Convenios = () => {
             <TableBody>
               {isLoading ? (
                 <TableRow>
-                  <TableCell colSpan={6}>
+                  <TableCell colSpan={7}>
                     <div className="space-y-2">
                       <Skeleton className="h-4 w-full" />
                       <Skeleton className="h-4 w-full" />
@@ -55,7 +56,8 @@ const Convenios = () => {
                 </TableRow>
               ) : agreements?.map((agreement) => (
                 <TableRow key={agreement.id}>
-                  <TableCell>{agreement.id}</TableCell>
+                  <TableCell>{agreement.id.slice(0,8)}</TableCell>
+                  <TableCell>{agreement.debtor_id}</TableCell>
                   <TableCell>${agreement.total_amount.toLocaleString()}</TableCell>
                   <TableCell>{agreement.installments}</TableCell>
                   <TableCell>{new Date(agreement.start_date).toLocaleDateString()}</TableCell>

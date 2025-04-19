@@ -9,7 +9,128 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      debtors: {
+        Row: {
+          client_id: string
+          created_at: string
+          email: string | null
+          id: string
+          identification: string
+          name: string
+          phone: string | null
+          status: string
+        }
+        Insert: {
+          client_id: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          identification: string
+          name: string
+          phone?: string | null
+          status?: string
+        }
+        Update: {
+          client_id?: string
+          created_at?: string
+          email?: string | null
+          id?: string
+          identification?: string
+          name?: string
+          phone?: string | null
+          status?: string
+        }
+        Relationships: []
+      }
+      obligations: {
+        Row: {
+          amount: number
+          created_at: string
+          debtor_id: string
+          due_date: string
+          id: string
+          number: string
+          status: string
+          type: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          debtor_id: string
+          due_date: string
+          id?: string
+          number: string
+          status?: string
+          type: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          debtor_id?: string
+          due_date?: string
+          id?: string
+          number?: string
+          status?: string
+          type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "obligations_debtor_id_fkey"
+            columns: ["debtor_id"]
+            isOneToOne: false
+            referencedRelation: "debtors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      payment_agreements: {
+        Row: {
+          created_at: string
+          debtor_id: string
+          id: string
+          installments: number
+          obligation_id: string
+          start_date: string
+          status: string
+          total_amount: number
+        }
+        Insert: {
+          created_at?: string
+          debtor_id: string
+          id?: string
+          installments: number
+          obligation_id: string
+          start_date: string
+          status?: string
+          total_amount: number
+        }
+        Update: {
+          created_at?: string
+          debtor_id?: string
+          id?: string
+          installments?: number
+          obligation_id?: string
+          start_date?: string
+          status?: string
+          total_amount?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payment_agreements_debtor_id_fkey"
+            columns: ["debtor_id"]
+            isOneToOne: false
+            referencedRelation: "debtors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "payment_agreements_obligation_id_fkey"
+            columns: ["obligation_id"]
+            isOneToOne: false
+            referencedRelation: "obligations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

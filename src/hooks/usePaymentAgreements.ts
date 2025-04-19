@@ -7,18 +7,21 @@ export function usePaymentAgreements() {
   return useQuery({
     queryKey: ['payment_agreements'],
     queryFn: async () => {
-      try {
-        const { data, error } = await supabase
-          .from('payment_agreements')
-          .select('*')
-          .order('created_at', { ascending: false });
+      const { data, error } = await supabase
+        .from('payment_agreements')
+        .select(`
+          *,
+          debtor:debtors(name, identification),
+          obligation:obligations(number, type)
+        `)
+        .order('created_at', { ascending: false });
 
-        if (error) throw error;
-        return data as PaymentAgreement[] || [];
-      } catch (error) {
+      if (error) {
         console.error('Error fetching payment agreements:', error);
         return [] as PaymentAgreement[];
       }
+
+      return data as PaymentAgreement[] || [];
     },
   });
 }
