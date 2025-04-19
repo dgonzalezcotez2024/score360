@@ -9,6 +9,9 @@ import Dashboard from "./pages/Dashboard";
 import NotFound from "./pages/NotFound";
 import AppLayout from "./components/AppLayout";
 import Clientes from "./pages/Clientes";
+import Deudores from "./pages/Deudores";
+import Obligaciones from "./pages/Obligaciones";
+import Convenios from "./pages/Convenios";
 
 const queryClient = new QueryClient();
 
@@ -24,9 +27,9 @@ const App = () => (
           <Route element={<AppLayout />}>
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/clientes" element={<Clientes />} />
-            <Route path="/deudores" element={<Dashboard />} />
-            <Route path="/obligaciones" element={<Dashboard />} />
-            <Route path="/convenios" element={<Dashboard />} />
+            <Route path="/deudores" element={<Deudores />} />
+            <Route path="/obligaciones" element={<Obligaciones />} />
+            <Route path="/convenios" element={<Convenios />} />
             <Route path="/procesos" element={<Dashboard />} />
             <Route path="/agenda" element={<Dashboard />} />
             <Route path="/reportes" element={<Dashboard />} />
